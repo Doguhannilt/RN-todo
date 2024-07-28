@@ -1,0 +1,1 @@
+I've just created this project to warm my hands before making a mid-scale project. This project is a tiny reminder of how I can use the core components of the RN. I will use this low-scale project as a boilerplate project.
