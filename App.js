@@ -1,5 +1,8 @@
 import { useState } from 'react';
-import { Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Button, ScrollView, StyleSheet, Text, FlatList, TextInput, View } from 'react-native';
+
+import GoalItem from './components/GoalItem';
+import GoalInput from './components/GoalInput';
 
 export default function App() {
   const [enteredGoal, setEnteredGoal] = useState('');
@@ -10,31 +13,30 @@ export default function App() {
   };
 
   const addGoalHandler = () => {
-    setCourseGoals((currentCourseGoals) => [...currentCourseGoals, enteredGoal]);
+    setCourseGoals((currentCourseGoals) => [...currentCourseGoals, { text: enteredGoal, key: Math.random().toString() }]);
   };
 
- 
+  const deleteGoalHandler = (id) => {
+    setCourseGoals(currentCourseGoals => {
+      return currentCourseGoals.filter((goal) => goal.id !== id )
+    })
+  }
 
   return (
     <View style={styles.appContainer}>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.textInput}
-          placeholder='Your course goal!'
-          onChangeText={goalInputHandler}
-        />
-        <Button
-          title='Add Goal!'
-          onPress={addGoalHandler}
-        />
-      </View>
-      <ScrollView style={styles.goalsContainer}>
-        {courseGoals.map((goal, index) => (
-          <View key={index} style={styles.goalItem}>
-            <Text>{goal}</Text>
-          </View>
-        ))}
-      </ScrollView>
+      <GoalInput onAddGoal={addGoalHandler} onInputHandler={goalInputHandler} />
+      <FlatList
+        data={courseGoals}
+        renderItem={(itemData) => {
+          return (
+            <GoalItem
+              text={itemData.item.text}
+              id={itemData.item.id}
+              onDeleteItem={deleteGoalHandler} />
+          );
+        }}
+        style={styles.goalsContainer}
+      />
     </View>
   );
 }
@@ -43,17 +45,7 @@ const styles = StyleSheet.create({
   appContainer: {
     padding: 50,
   },
-  inputContainer: {
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-  },
-  textInput: {
-    marginBottom: 10,
-    height: 60,
-    borderWidth: 1,
-    padding: 4,
-    borderColor: '#cccccc',
-  },
+
   goalsContainer: {
     marginTop: 20,
   },
